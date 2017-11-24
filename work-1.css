@@ -1,0 +1,18 @@
+#container {
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width:900px;
+    height: 900px;
+    display: inline-grid;
+}
+.row {
+    float: left;
+    height: 30px;
+}
+.cell {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 30px;
+    height: 30px;
+}

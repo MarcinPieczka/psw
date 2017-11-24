@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hyper Text Visual Art</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Sztuka wizualna">
+	<meta name="keywords" content="Sztuka, HTML, JS">
+	<meta name="author" content="Marcin Pieczka">
+	<link rel="stylesheet" href="base.css">
+	<link rel="stylesheet" href="neon-sign.css">
+	<link rel="stylesheet" href="work-2.css">
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="sprintf.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="work-2.js"></script>
+</head>
+<body>
+	<div class="navbar">
+		<a href="index.html">Home</a>
+		<div class="dropdown">
+			<button class="dropbtn">Works
+				<i class="fa fa-caret-down"></i>
+			</button>
+			<div class="dropdown-content">
+				<a href="work-1.html">Work 1</a>
+				<a href="work-2.html" id="garbage">Work 2</a>
+			</div>
+		</div>
+	</div>
+    <div id="g-container">
+    </div>
+	<select id="font-select" onchange="change_font()">
+		<option value="Arial">Arial</option>
+		<option value="Times" selected="selected">Times</option>
+	</select>
+</body>
+</html>
