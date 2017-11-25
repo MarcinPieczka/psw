@@ -2,7 +2,7 @@
     max-width: 330px;
     padding: 15px;
     margin: 0 auto;
-    color: #017572;
+    color: #000000;
 }
 
 .form-signin .form-signin-heading,
@@ -17,9 +17,6 @@
 .form-signin .form-control {
     position: relative;
     height: auto;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
     padding: 10px;
     font-size: 16px;
 }
@@ -28,21 +25,12 @@
     z-index: 2;
 }
 
-.form-signin input[type="email"] {
-    margin-bottom: -1px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    border-color:#017572;
-}
-
-.form-signin input[type="password"] {
+.form-signin input {
     margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-color:#017572;
 }
 
 h2{
     text-align: center;
-    color: #017572;
+    padding-right: 50px;
+    color: #000000;
 }

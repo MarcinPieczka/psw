@@ -37,8 +37,14 @@ function authenticate($username, $password) {
         return FALSE;
      }
 }
-var_dump(authenticate('admin', 'admin'));
-var_dump(authenticate('admin', 'dupa'));
-var_dump(authenticate('dupa', 'admin'));
+function register($username, $password) {
+    global $conn;
+    $passwd = password_hash($password, PASSWORD_DEFAULT);
+    $query = 'insert into Users values(\'' . $username . '\',\'' . $passwd . '\', \'regular\');';
+    return mysqli_query($conn, $query);
+}
+//var_dump(authenticate('admin', 'admin'));
+//var_dump(authenticate('admin', 'dupa'));
+//var_dump(authenticate('dupa', 'admin'));
 //mysqli_close($conn);
 ?>

@@ -10,19 +10,23 @@ session_load();
 </head>
 <body>
     <?php include("partials/menu.php") ?>
-    <h2>Login</h2>
+    <h2>Register</h2>
     <div class = "container form-signin">
         <?php
 
         $msg = '';
 
         if (isset($_POST['submit']) && !empty($_POST['username'])
-        && !empty($_POST['password'])) {
-            if (authenticate($_POST['username'], $_POST['password'])) {
-                $_SESSION['username'] = $_POST['username'];
-                redirect('info.php?msg=You_have_logged_in_succesfully');
+        && !empty($_POST['password1']) && !empty($_POST['password2'])) {
+            if ($_POST['password1'] != $_POST['password2']) {
+                $msg = 'repeated password must be identical to password';
             } else {
-                $msg = 'Wrong username or password';
+                $registration_result = register($_POST['username'], $_POST['password1']);
+                if ($registration_result) {
+                    redirect('info.php?msg=You_have_registered_succesfully');
+                } else {
+                    $msg = 'this userneme is already used';
+                }
             }
         }
         ?>
@@ -36,9 +40,11 @@ session_load();
         name = "username" placeholder = "username"
         required autofocus></br>
         <input type = "password" class = "form-control"
-        name = "password" placeholder = "password" required>
+        name = "password1" placeholder = "password" required>
+        <input type = "password" class = "form-control"
+        name = "password2" placeholder = "repeat password" required>
         <button class = "btn btn-lg btn-primary btn-block" type = "submit"
-        name = "submit">Login</button>
+        name = "submit">Register</button>
     </form>
 </div>
 </body>
