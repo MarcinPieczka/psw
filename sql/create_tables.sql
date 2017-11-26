@@ -8,3 +8,11 @@ create table Users (
     type Varchar(12) not null default 'regular',
     primary key(login)
 );
+
+create table Comments ()
+    url Varchar(50) not null,
+    user Varchar(30) not null,
+    created Timestamp default current_timestamp not null,
+    text Varchar(400) not null,
+    foreign key(user) references Users(login)
+)

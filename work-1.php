@@ -19,5 +19,8 @@
 		}
 		</script>
 	</div>
+	<?php
+	require('partials/comments.php');
+	?>
 </body>
 </html>

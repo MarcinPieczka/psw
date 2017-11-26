@@ -37,11 +37,31 @@ function authenticate($username, $password) {
         return FALSE;
      }
 }
+
 function register($username, $password) {
     global $conn;
     $passwd = password_hash($password, PASSWORD_DEFAULT);
     $query = 'insert into Users values(\'' . $username . '\',\'' . $passwd . '\', \'regular\');';
     return mysqli_query($conn, $query);
+}
+
+function get_comments() {
+    global $conn;
+    $query = 'select user, text, created from Comments where url=\'' . $_SERVER['REQUEST_URI'] . '\'';
+    $res = mysqli_query($conn, $query);
+    $comments = array();
+    while($row = mysqli_fetch_assoc($res)) {
+        array_push($comments, $row);
+    }
+    return $comments;
+}
+function save_comment($comment) {
+    global $conn;
+    $query = 'insert into Comments values(\''
+        . $_SERVER['REQUEST_URI'] . '\', \''
+        . $_SESSION['username'] . '\', null, \''
+        . $comment . '\')';
+    mysqli_query($conn, $query);
 }
 //var_dump(authenticate('admin', 'admin'));
 //var_dump(authenticate('admin', 'dupa'));

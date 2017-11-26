@@ -10,10 +10,9 @@ session_load();
 <body>
 
     <?php include("partials/menu.php") ?>
-    <div>Zostałeś wylogowany</div>
     <?php
     session_unset();
-    redirect('index.php');
+    redirect('info.php?msg=You_have_logged_out_successfully');
     ?>
 </body>
 </html>
