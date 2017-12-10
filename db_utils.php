@@ -42,6 +42,10 @@ function register($username, $password) {
     global $conn;
     $passwd = password_hash($password, PASSWORD_DEFAULT);
     $query = 'insert into Users values(\'' . $username . '\',\'' . $passwd . '\', \'regular\');';
+    if (isset($_SESSION['username'])) {
+        $query = "update Users set passwordHash='" . $passwd . "' where login='" . $username . "'";
+        var_dump($query);
+    }
     return mysqli_query($conn, $query);
 }
 
@@ -83,6 +87,24 @@ function save_blog_post($title, $blog_post) {
         . $title . '\', \''
         . $blog_post . '\')';
     mysqli_query($conn, $query);
+}
+function get_all_users() {
+    global $conn;
+    $res = mysqli_query($conn, "select * from Users");
+    $arr = array();
+    while($row = mysqli_fetch_assoc($res)) {
+        array_push($arr, $row);
+    }
+    return $arr;
+}
+function get_all_comments() {
+    global $conn;
+    $res = mysqli_query($conn, "select * from Comments");
+    $arr = array();
+    while($row = mysqli_fetch_assoc($res)) {
+        array_push($arr, $row);
+    }
+    return $arr;
 }
 //var_dump(authenticate('admin', 'admin'));
 //var_dump(authenticate('admin', 'dupa'));

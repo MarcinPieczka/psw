@@ -35,6 +35,7 @@ session_load();
     } else {
         echo '<a class="navbar-a-right" href="account.php">Logged in as <strong>' . $_SESSION['username'] . '</strong></a>';
         echo '<a class="navbar-a-right" href="logout.php">Logout</a>';
+        echo '<a class="navbar-a-right" href="register.php">Change Password</a>';
     }
 
     ?>
