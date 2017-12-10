@@ -55,12 +55,33 @@ function get_comments() {
     }
     return $comments;
 }
+
 function save_comment($comment) {
     global $conn;
     $query = 'insert into Comments values(\''
         . $_SERVER['REQUEST_URI'] . '\', \''
         . $_SESSION['username'] . '\', null, \''
         . $comment . '\')';
+    mysqli_query($conn, $query);
+}
+
+function get_blog_posts($username) {
+    global $conn;
+    $query = 'select * from BlogPosts where user=\'' . $username . '\'';
+    $res = mysqli_query($conn, $query);
+    $comments = array();
+    while($row = mysqli_fetch_assoc($res)) {
+        array_push($comments, $row);
+    }
+    return $comments;
+}
+
+function save_blog_post($title, $blog_post) {
+    global $conn;
+    $query = 'insert into BlogPosts values(\''
+        . $_SESSION['username'] . '\', null, \''
+        . $title . '\', \''
+        . $blog_post . '\')';
     mysqli_query($conn, $query);
 }
 //var_dump(authenticate('admin', 'admin'));
