@@ -8,57 +8,51 @@
     <meta name="keywords" content="Sztuka, HTML, JS">
     <meta name="author" content="Marcin Pieczka">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/comments.css' %}">
+    <link rel="stylesheet" href="{% static 'css/comments.css' %}">
+    {% block styles %}
+    {% endblock %}
+
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sprintf.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/vue.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/menu.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
 </head>
 <body>
     {% verbatim %}
-    <div class="navbar">
-    <a class="navbar-a" href="index.php">Home</a>
-    <div class="dropdown">
-        <button class="dropbtn">Works
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-content">
-            <a class="navbar-a" href="work-1.php">Work 1</a>
-            <a class="navbar-a" href="work-2.php">Work 2</a>
+    <div class="navbar" id="vue-menu-app">
+        <a class="navbar-a" href="/">Home</a>
+        <div class="dropdown">
+            <button class="dropbtn">Works
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a class="navbar-a" href="/work-1">Work 1</a>
+                <a class="navbar-a" href="/work-2">Work 2</a>
+            </div>
+
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Blogs
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a class="navbar-a" href="/blogs">Find a Blog</a>
+                <a v-cloak v-if="is_logged_in" class="navbar-a" href="/my-blog">My Blog</a>
+
+            </div>
         </div>
 
+        <a v-cloak v-if="!is_logged_in && !is_checking_authentication" class="navbar-a-right" href="register">Register</a>
+        <a v-cloak v-if="!is_logged_in && !is_checking_authentication" class="navbar-a-right" href="login">Login</a>
+        <a v-cloak v-if="is_logged_in && !is_checking_authentication" class="navbar-a-right" href="account">Logged in as <strong>{{ username }}</strong></a>
+        <a v-cloak v-if="is_logged_in && !is_checking_authentication" class="navbar-a-right" href="logout">Logout</a>
+        <a v-cloak v-if="is_logged_in && !is_checking_authentication" class="navbar-a-right" href="register">Change Password</a>
     </div>
-    <div class="dropdown">
-        <button class="dropbtn">Blogs
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-content">
-            <a class="navbar-a" href="blogs.php">Find a Blog</a>
-            <!--
-            <?php
-            if (isset($_SESSION['username'])) {
-            echo '<a class="navbar-a" href="my-blog.php">My Blog</a>';
-            }
-            ?>
-            -->
-        </div>
-    </div>
-        <!--
-        <?php
-        if (! isset($_SESSION['username'])) {
-            echo '<a class="navbar-a-right" href="register.php">Register</a>';
-            echo '<a class="navbar-a-right" href="login.php">Login</a>';
-        } else {
-            echo '<a class="navbar-a-right" href="account.php">Logged in as <strong>' . $_SESSION['username'] . '</strong></a>';
-            echo '<a class="navbar-a-right" href="logout.php">Logout</a>';
-            echo '<a class="navbar-a-right" href="register.php">Change Password</a>';
-        }
-
-        ?>
-        -->
+    {% endverbatim %}
     {% block content %}
     {% endblock %}
-</div>
-
 </body>
 </html>
-{% endverbatim %}

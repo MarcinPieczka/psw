@@ -91,7 +91,6 @@ async function run() {
             elem = elems[i];
             alpha = calculate_alpha(elem);
             if (Math.abs(alpha - elem.alpha) >= 0.1) {
-                //$(elems[key].elem).css('background-color', sprintf('rgba(0, 0, 0, %f)', alpha.toFixed(1)));
                 elem.elem.style.backgroundColor = sprintf("rgba(0, 0, 0, %s)", alpha.toFixed(2));
                 elem.alpha = alpha;
             }
@@ -106,8 +105,6 @@ function click_event_handler(event) {
 
 $(document).ready(function() {
     elems = get_elements();
-    console.log(elems);
     window.addEventListener("click", click_event_handler);
-    console.log("ready");
     run();
 });
