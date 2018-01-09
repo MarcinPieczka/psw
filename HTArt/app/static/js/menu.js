@@ -71,7 +71,17 @@ $(document).ready(function(){
                         this.checkLogin();
                     }.bind(this),
                     error: function(jqXHR, status, error){
-                        this.modalError = error;
+                        var err = jqXHR.responseJSON.non_field_errors;
+                        console.log(err);
+                        console.log(error);
+                        console.log(status);
+                        console.log(jqXHR);
+                        for (var key in jqXHR.responseJSON) {
+                            if (Object.prototype.hasOwnProperty.call(jqXHR.responseJSON, key)) {
+                                var val = jqXHR.responseJSON[key];
+                                this.modalError = val[0];
+                            }
+                        }
                     }.bind(this)
                 });
             },

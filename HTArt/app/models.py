@@ -16,3 +16,9 @@ class BlogPost(models.Model):
     created = models.DateTimeField(default=datetime.now())
     title = models.TextField(max_length=100)
     text = models.TextField(max_length=40000)
+
+
+class Product(models.Model):
+    img_name = models.CharField(primary_key=True, max_length=10)
+    price = models.FloatField()
+    category = models.CharField(choices=(('T-Shirt', 'T-Shirt'), ('Mug', 'Mug'), ('Blouse', 'Blouse')), max_length=10)
