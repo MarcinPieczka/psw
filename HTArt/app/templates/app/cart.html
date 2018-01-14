@@ -44,9 +44,9 @@
         <option><p>DPD &nbsp &nbsp &nbsp 9$</p></option>
     </select>
     <hr>
-    <h2 v-model="total_price">Total Price: {{total_price}}$</h2>
-    <h3 v-model="products_cost">Products Cost: {{products_cost}}$</h3>
-    <h3 v-model="delivery_cost">Delivery Cost: {{delivery_cost}}$</h3>
+    <h2 v-model="total_price">Total Price: {{total_price.toFixed(2)}}$</h2>
+    <h3 v-model="products_cost">Products Cost: {{products_cost.toFixed(2)}}$</h3>
+    <h3 v-model="delivery_cost">Delivery Cost: {{delivery_cost.toFixed(2)}}$</h3>
     <div>
         <a href="/products"><button class="btn">Go Back</button></a>
         <button class="btn" v-on:click="order()" v-if="!cart_empty">Order</button>

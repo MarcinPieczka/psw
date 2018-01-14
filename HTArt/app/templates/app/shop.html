@@ -15,9 +15,10 @@
     </a>
     <hr>
     <div class="categories-container">
-        <h3>Filter Categories</h3>
+        <h3>Category</h3>
         <div v-for="category in categories" v-if="got_categories">
-            <input type="checkbox" checked="true" v-on:change="filter_products()" v-bind:id="category">{{ category + "s"}}
+            <input type="radio" v-bind:checked="category.checked"
+                   v-on:change="filter_products()" v-bind:id="category.id">{{ category.name + "s"}}
         </div>
     </div>
     <hr>

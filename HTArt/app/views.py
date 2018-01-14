@@ -40,7 +40,7 @@ def cart(request):
 def order_confirmation(request, order_id):
     price = Order.objects.get(id=order_id).price
     return render(request, 'app/confirmation.html',
-                  context={'price': price, 'order_id': order_id})
+                  context={'price': str('%.2f' % price), 'order_id': order_id})
 
 
 @api_view()

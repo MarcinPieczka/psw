@@ -34,7 +34,7 @@
                     <br>
                     <div v-on:click="login" class="modal-submit-btn">Login</div>
                     <div v-on:click="closeModals" class="modal-submit-btn">Cancel</div>
-                    <div>{{ modalError }}</div>
+                    <div class="modal-error">{{ modalError }}</div>
                 </div>
                 <div class="modal-content" v-if="showRegisterModal" v-cloak>
                     <h2>Register</h2>
@@ -45,7 +45,7 @@
                     <br>
                     <div v-on:click="register" class="modal-submit-btn">Register</div>
                     <div v-on:click="closeModals" class="modal-submit-btn">Cancel</div>
-                    <div>{{ modalError }}</div>
+                    <div class="modal-error">{{ modalError }}</div>
                 </div>
                 <div class="modal-content" v-if="showPasswordChangeModal" v-cloak>
                     <h2>Change Password</h2>
@@ -54,7 +54,7 @@
                     <br>
                     <div v-on:click="changePassword" class="modal-submit-btn">Update Password</div>
                     <div v-on:click="closeModals" class="modal-submit-btn">Cancel</div>
-                    <div>{{ modalError }}</div>
+                    <div class="modal-error">{{ modalError }}</div>
                 </div>
             </div>
         </div>

@@ -71,17 +71,7 @@ $(document).ready(function(){
                         this.checkLogin();
                     }.bind(this),
                     error: function(jqXHR, status, error){
-                        var err = jqXHR.responseJSON.non_field_errors;
-                        console.log(err);
-                        console.log(error);
-                        console.log(status);
-                        console.log(jqXHR);
-                        for (var key in jqXHR.responseJSON) {
-                            if (Object.prototype.hasOwnProperty.call(jqXHR.responseJSON, key)) {
-                                var val = jqXHR.responseJSON[key];
-                                this.modalError = val[0];
-                            }
-                        }
+                        this.set_modal_error(jqXHR);
                     }.bind(this)
                 });
             },
@@ -108,7 +98,7 @@ $(document).ready(function(){
                         this.checkLogin();
                     }.bind(this),
                     error: function(jqXHR, status, error){
-                        this.modalError = error;
+                        this.set_modal_error(jqXHR);
                     }.bind(this)
                 });
             },
@@ -131,9 +121,21 @@ $(document).ready(function(){
                         this.checkLogin();
                     }.bind(this),
                     error: function(jqXHR, status, error){
-                        this.modalError = error;
+                        this.set_modal_error(jqXHR);
                     }.bind(this)
                 });
+            },
+            set_modal_error(jqXHR) {
+                this.modalError = '';
+                for (var key in jqXHR.responseJSON) {
+                    if (Object.prototype.hasOwnProperty.call(jqXHR.responseJSON, key)) {
+                        var val = jqXHR.responseJSON[key];
+                        console.log(val);
+                        console.log(key);
+                        this.modalError = ((key !== 'non_field_errors' ? key + ': ' : ''))
+                                            + val[0];
+                    }
+                }
             },
             startLoginModal: function() {
                 this.showModalBg = true;

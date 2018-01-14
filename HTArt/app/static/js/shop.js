@@ -18,7 +18,7 @@ $(document).ready(function(){
                     success: function(response){
                         this.products = response;
                         this.all_products = this.products;
-                        this.prepare_products();
+                        this.prepare_products(true);
                         this.got_products = true;
                     }.bind(this)
                 });
@@ -29,13 +29,28 @@ $(document).ready(function(){
                     url: "/api/categories/",
                     async: true,
                     success: function(response){
-                        this.categories = response;
+                        this.categories = [];
+                        for(var i = 0; i < response.length; i++) {
+                            this.categories.push({
+                                name: response[i],
+                                checked: (i === 0) ? true : false,
+                                id: "category-id-" + i
+                            });
+                        }
                         this.got_categories = true;
                     }.bind(this)
                 });
             },
-            prepare_products: function(){
+            prepare_products: function(after_load){
                 this.products_to_show = [];
+                if(after_load) {
+                    this.products = [];
+                    for(let prod of this.all_products) {
+                        if(prod.category === "Mug") {
+                            this.products.push(prod);
+                        }
+                    }
+                }
                 for(var i = 0; i <= Math.ceil(this.products.length/3); i++) {
                     var line = [];
                     for(var j = 0; j < 3; j++) {
@@ -93,10 +108,19 @@ $(document).ready(function(){
                 this.prods_in_cart = Math.floor(this.get_cart_from_cookie().length/2);
             },
             filter_products: function(category) {
+                for(let cat of this.categories) {
+                    var elem = document.getElementById(cat.id);
+                    if(elem.checked !== cat.checked) {
+                        cat.checked = elem.checked;
+                    } else {
+                        elem.checked = false;
+                        cat.checked = false;
+                    }
+                }
                 var products = this.all_products;
-                for(var i = 0; i < this.categories.length; i++) {
-                    if(!document.getElementById(this.categories[i]).checked) {
-                        products = products.filter(prod => prod.category !== this.categories[i]);
+                for(let cat of this.categories) {
+                    if(!cat.checked) {
+                        products = products.filter(prod => prod.category !== cat.name);
                     }
                 }
                 this.products = products;
