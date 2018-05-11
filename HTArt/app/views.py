@@ -141,3 +141,63 @@ def db_setup(request):
         p.category = product[2]
         p.save()
     return render(request, 'app/index.html')
+
+#
+# Here starts new code made for RSI labs
+#
+
+# Single blog functions
+
+@api_view(['GET'])
+def get_blog(request, name):
+    pass
+
+@api_view(['POST'])
+def create_blog(request, name):
+    pass
+
+@api_view(['DELETE'])
+def delete_blog(request, name):
+    pass
+
+# Agregated blog functions
+
+@api_view(['GET'])
+def get_blog_headers(request):
+    pass
+
+# Blog post functions
+
+@api_view(['GET'])
+def get_blog_post(request, blog_name):
+    pass
+
+@api_view(['POST'])
+def create_blog_post(request, blog_name, title, content):
+    pass
+
+@api_view(['PUT'])
+def update_blog_post(request, blog_name, post_index, title, content):
+    pass
+
+@api_view(['DELETE'])
+def delete_blog_post(request, blog_name, post_index):
+    pass
+
+# Blog post comments functions
+
+@api_view(['GET'])
+def get_blog_post_comments(request, blog_name, post_index):
+    pass
+
+@api_view(['POST'])
+def create_blog_post_comment(request, blog_name, post_index, comment):
+    pass
+
+@api_view(['PUT'])
+def update_blog_post_comment(request, blog_name, post_index, comment_index, comment):
+    pass
+
+@api_view(['DELETE'])
+def delete_blog_post_comments(request, blog_name, post_index, comment_index):
+    pass
