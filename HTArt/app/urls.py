@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^api/blog/(?P<name>\w+)/$', views.blog),
     url(r'^api/blog/(?P<blog_name>\w+)/post/$', views.blog_posts),
     url(r'^api/blog/(?P<blog_name>\w+)/post/(?P<post_title>\w+)/$', views.blog_post),
+    url(r'^api/blog/(?P<blog_name>\w+)/post/(?P<post_title>\w+)/comment/$', views.comments),
+    url(r'^api/blog/(?P<blog_name>\w+)/post/(?P<post_title>\w+)/comment/(?P<comment_id>\w+)/$', views.comment),
 ]

@@ -151,7 +151,7 @@ def blog(request, name):
     elif request.method == 'POST':
         if blog is not None:
             return Response({"error": "blog with that name already exists"})
-        elif isinstance(request.user, AnonymousUser):
+        elif isinstance(request.user, AnonymousUser) and blog.user != request.user:
             return Response({"error": "guest user cannot create blog"})
         else:
             Blog.objects.create(name=name, user=request.user)
@@ -177,6 +177,11 @@ def blog_posts(request, blog_name):
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def blog_post(request, blog_name, post_title):
+    blog = Blog.objects.filter(name=blog_name).first()
+
+    if blog is None:
+        return Response({"error": "no such blog exists"})
+
     post = BlogPost.objects.filter(title=post_title, blog__name=blog_name).first()
 
     if request.method == 'GET':
@@ -184,11 +189,6 @@ def blog_post(request, blog_name, post_title):
             return Response({"error": "no such post exists"})
         else:
             return Response(model_to_dict(post))
-
-    blog = Blog.objects.filter(name=blog_name).first()
-
-    if blog is None:
-        return Response({"error": "no such blog exists"})
 
     if request.user != blog.user or isinstance(request.user, AnonymousUser):
         return Response({"error": "only owner of blog can do this action"})
@@ -219,71 +219,48 @@ def blog_post(request, blog_name, post_title):
             post.delete()
             return Response({"ok": 1})
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def comments(request, blog_name, post_title):
-    posts = []
-    for post in BlogPost.objects.filter(blog__name=blog_name):
-        posts.append(model_to_dict(post))
-    return Response(posts)
-
-
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
-def comment(request, blog_name, post_title):
-    post = BlogPost.objects.filter(title=post_title, blog__name=blog_name).first()
-
     if request.method == 'GET':
-        if post is None:
-            return Response({"error": "no such post exists"})
-        else:
-            return Response(model_to_dict(post))
-
-    blog = Blog.objects.filter(name=blog_name).first()
-
-    if blog is None:
-        return Response({"error": "no such blog exists"})
-
-    if request.user != blog.user or isinstance(request.user, AnonymousUser):
-        return Response({"error": "only owner of blog can do this action"})
+        comments = []
+        for comment in Comment.objects.filter(blog_post__blog__name=blog_name, blog_post__title=post_title):
+            comments.append(model_to_dict(comment))
+        return Response(comments)
 
     if request.method == 'POST':
-        if post is not None:
-            return Response({"error": "post with such title already exists"})
-        else:
-            BlogPost.objects.create(
-                title=post_title,
-                blog=blog,
-                content=request.data.get("content", "")
-            )
-            return Response({"ok": 1})
+        if isinstance(request.user, AnonymousUser):
+            return Response({"error": "guest user cannot do this action"})
+        post = BlogPost.objects.filter(title=post_title, blog__name=blog_name).first()
+        if post is None:
+            return Response({"error": "no such post or blog exist"})
+        Comment.objects.create(
+            user=request.user,
+            blog_post=post,
+            comment=request.data.get("content", "")
+        )
+        return Response({"ok": 1})
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def comment(request, blog_name, post_title, comment_id):
+    comment = Comment.objects.filter(id=comment_id, blog_post__blog__name=blog_name,
+                                     blog_post__title=post_title).first()
+
+    if comment is None:
+        return Response({"error": "no such comment exists"})
+
+    if request.method == 'GET':
+        return Response(model_to_dict(comment))
+
+    if request.user != comment.user or isinstance(request.user, AnonymousUser):
+        return Response({"error": "only owner of blog can do this action"})
 
     if request.method == 'PUT':
-        if post is None:
-            return Response({"error": "post with such title does not exist"})
-        else:
-            post.content = request.data.get("content", "")
-            post.save()
-            return Response({"ok": 1})
+        comment.comment = request.data.get("content", "")
+        comment.save()
+        return Response({"ok": 1})
 
     elif request.method == 'DELETE':
-        if post is None:
-            return Response({"error": "post with such title does not exist"})
-        else:
-            post.delete()
-            return Response({"ok": 1})
+        comment.delete()
+        return Response({"ok": 1})
 
-
-@api_view(['GET'])
-def get_blog_post_comments(request, blog_name, post_index):
-    pass
-
-@api_view(['POST'])
-def create_blog_post_comment(request, blog_name, post_index, comment):
-    pass
-
-@api_view(['PUT'])
-def update_blog_post_comment(request, blog_name, post_index, comment_index, comment):
-    pass
-
-@api_view(['DELETE'])
-def delete_blog_post_comments(request, blog_name, post_index, comment_index):
-    pass
