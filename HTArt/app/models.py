@@ -32,7 +32,6 @@ class Blog(models.Model):
 
 class BlogPost(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    index = models.IntegerField(null=False)
     title = models.TextField(max_length=100)
     content = models.TextField(max_length=40000)
 

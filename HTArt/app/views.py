@@ -1,16 +1,18 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.core import serializers
 from django.shortcuts import render
+from django.forms.models import model_to_dict
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from random import randint, random, getrandbits
+import json
 
-from app.models import Comments, BlogPost
+from .models import Comment, BlogPost, Blog
 
-from app.models import Product
+from .models import Product
 
-from app.models import Order
+from .models import Order
 
 
 def index(request):
@@ -44,23 +46,9 @@ def order_confirmation(request, order_id):
 
 
 @api_view()
-def get_comments(request, page_id):
-    return Response(serializers.serialize('json',
-                    Comments.objects.filter(page_id=page_id)))
-
-
-@api_view()
 def get_order_price(request, order_id):
     order = Order.objects.get(id=order_id)
     return Response(order.price, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def post_comments(request):
-    print(request.data)
-    user = User.objects.filter(username=request.data.user)[0]
-
-    return Response("just a test", status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -86,12 +74,6 @@ def post_order(request):
     order.save()
 
     return Response(order.id, status=status.HTTP_200_OK)
-
-
-@api_view()
-def get_blog_posts(request, username):
-    return Response(serializers.serialize('json',
-                    BlogPost.objects.filter(user__username=username)))
 
 
 @api_view()
@@ -146,45 +128,149 @@ def db_setup(request):
 # Here starts new code made for RSI labs
 #
 
-# Single blog functions
 
 @api_view(['GET'])
-def get_blog(request, name):
-    pass
+def blogs(request):
+    blogs = []
+    for blog in Blog.objects.all():
+        blogs.append(model_to_dict(blog))
+    return Response(blogs)
 
-@api_view(['POST'])
-def create_blog(request, name):
-    pass
 
-@api_view(['DELETE'])
-def delete_blog(request, name):
-    pass
+@api_view(['GET', 'POST', 'DELETE'])
+def blog(request, name):
+    blog = Blog.objects.filter(name=name).first()
 
-# Agregated blog functions
+    if request.method == 'GET':
+        print(blog)
+        if blog is None:
+            return Response({"error": "no such blog exists"})
+        blog = model_to_dict(blog)
+        return Response(blog)
+
+    elif request.method == 'POST':
+        if blog is not None:
+            return Response({"error": "blog with that name already exists"})
+        elif isinstance(request.user, AnonymousUser):
+            return Response({"error": "guest user cannot create blog"})
+        else:
+            Blog.objects.create(name=name, user=request.user)
+            return Response({"ok": 1})
+
+    elif request.method == 'DELETE':
+        if blog is None:
+            return Response({"error": "no such blog exists"})
+        if blog.user != request.user:
+            return Response({"error": "you are not the owner of that blog"})
+        else:
+            blog.delete()
+            return Response({"ok": 1})
+
 
 @api_view(['GET'])
-def get_blog_headers(request):
-    pass
+def blog_posts(request, blog_name):
+    posts = []
+    for post in BlogPost.objects.filter(blog__name=blog_name):
+        posts.append(model_to_dict(post))
+    return Response(posts)
 
-# Blog post functions
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def blog_post(request, blog_name, post_title):
+    post = BlogPost.objects.filter(title=post_title, blog__name=blog_name).first()
+
+    if request.method == 'GET':
+        if post is None:
+            return Response({"error": "no such post exists"})
+        else:
+            return Response(model_to_dict(post))
+
+    blog = Blog.objects.filter(name=blog_name).first()
+
+    if blog is None:
+        return Response({"error": "no such blog exists"})
+
+    if request.user != blog.user or isinstance(request.user, AnonymousUser):
+        return Response({"error": "only owner of blog can do this action"})
+
+    if request.method == 'POST':
+        if post is not None:
+            return Response({"error": "post with such title already exists"})
+        else:
+            BlogPost.objects.create(
+                title=post_title,
+                blog=blog,
+                content=request.data.get("content", "")
+            )
+            return Response({"ok": 1})
+
+    if request.method == 'PUT':
+        if post is None:
+            return Response({"error": "post with such title does not exist"})
+        else:
+            post.content = request.data.get("content", "")
+            post.save()
+            return Response({"ok": 1})
+
+    elif request.method == 'DELETE':
+        if post is None:
+            return Response({"error": "post with such title does not exist"})
+        else:
+            post.delete()
+            return Response({"ok": 1})
 
 @api_view(['GET'])
-def get_blog_post(request, blog_name):
-    pass
+def comments(request, blog_name, post_title):
+    posts = []
+    for post in BlogPost.objects.filter(blog__name=blog_name):
+        posts.append(model_to_dict(post))
+    return Response(posts)
 
-@api_view(['POST'])
-def create_blog_post(request, blog_name, title, content):
-    pass
 
-@api_view(['PUT'])
-def update_blog_post(request, blog_name, post_index, title, content):
-    pass
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def comment(request, blog_name, post_title):
+    post = BlogPost.objects.filter(title=post_title, blog__name=blog_name).first()
 
-@api_view(['DELETE'])
-def delete_blog_post(request, blog_name, post_index):
-    pass
+    if request.method == 'GET':
+        if post is None:
+            return Response({"error": "no such post exists"})
+        else:
+            return Response(model_to_dict(post))
 
-# Blog post comments functions
+    blog = Blog.objects.filter(name=blog_name).first()
+
+    if blog is None:
+        return Response({"error": "no such blog exists"})
+
+    if request.user != blog.user or isinstance(request.user, AnonymousUser):
+        return Response({"error": "only owner of blog can do this action"})
+
+    if request.method == 'POST':
+        if post is not None:
+            return Response({"error": "post with such title already exists"})
+        else:
+            BlogPost.objects.create(
+                title=post_title,
+                blog=blog,
+                content=request.data.get("content", "")
+            )
+            return Response({"ok": 1})
+
+    if request.method == 'PUT':
+        if post is None:
+            return Response({"error": "post with such title does not exist"})
+        else:
+            post.content = request.data.get("content", "")
+            post.save()
+            return Response({"ok": 1})
+
+    elif request.method == 'DELETE':
+        if post is None:
+            return Response({"error": "post with such title does not exist"})
+        else:
+            post.delete()
+            return Response({"ok": 1})
+
 
 @api_view(['GET'])
 def get_blog_post_comments(request, blog_name, post_index):
